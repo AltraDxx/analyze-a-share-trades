@@ -22,7 +22,6 @@
 │   ├── agents/
 │   ├── references/
 │   └── scripts/
-├── .gitignore
 └── README.md
 ```
 
@@ -50,7 +49,7 @@ python3 -m venv .venv
 
 ## 必须自行配置凭证
 
-仓库不包含任何 API Key、Token、私有 MCP 配置或已经初始化的连接信息。每位用户必须在自己的设备上配置凭证。
+用户必须在自己的设备上配置凭证
 
 ### 方式一：环境变量
 
@@ -62,6 +61,7 @@ export DEEPSEEK_API_KEY="YOUR_DEEPSEEK_API_KEY"
 ```
 
 `DEEPSEEK_API_KEY` 只供可选的语义分析脚本使用；不使用该脚本时可以不配置。
+也可以使用qwen等的api
 
 ### 方式二：本地 `my_api_key.md`
 
@@ -72,7 +72,6 @@ TUSHARE_TOKEN: YOUR_TUSHARE_TOKEN
 DEEPSEEK_API_KEY: YOUR_DEEPSEEK_API_KEY
 ```
 
-`my_api_key.md` 已加入 `.gitignore`，不得提交或分享。不要把真实凭证填写进 README、Skill 文件、日志、截图或 issue。
 
 ## 初始化远程 Tushare MCP
 
