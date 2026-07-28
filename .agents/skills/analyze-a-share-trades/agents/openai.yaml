@@ -1,0 +1,4 @@
+interface:
+  display_name: "A股短中波段决策"
+  short_description: "沪深主板选股、持仓诊断、主线事件与短中波段买卖策略分析"
+  default_prompt: "使用 $analyze-a-share-trades 综合市场、主线、龙头、事件、量价和博弈，分析我的 A 股买卖问题。"
