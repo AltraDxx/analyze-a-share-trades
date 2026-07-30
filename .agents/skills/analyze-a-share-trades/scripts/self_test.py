@@ -678,6 +678,9 @@ def test_relative_window_output_policy() -> None:
     mainline = (
         SCRIPT_DIR.parent / "references" / "mainline-industry-map.md"
     ).read_text(encoding="utf-8")
+    market = (
+        SCRIPT_DIR.parent / "references" / "market-regime.md"
+    ).read_text(encoding="utf-8")
     strategy = (
         SCRIPT_DIR.parent / "references" / "strategy-playbooks.md"
     ).read_text(encoding="utf-8")
@@ -705,7 +708,7 @@ def test_relative_window_output_policy() -> None:
     assert "情绪龙头" in mainline
     assert "阶段性新核心" in mainline
     assert "不打分、不排名" in mainline
-    assert "每只候选，再分别选择一个主策略" in strategy
+    assert "对每只候选建立贯穿大盘—板块—个股的一个主假设和一个竞争假设" in strategy
     assert "事件首先是所有交易分析都可以使用的证据维度" in strategy
     assert "假设能够成交" in risk
     assert "未成交/部分成交" in risk
@@ -713,13 +716,29 @@ def test_relative_window_output_policy() -> None:
     assert "已无用户可使用的适用交易时段" in skill
     assert "不能仅凭“已收盘”机械跳到 D2" in contract
     assert "盘后固定价格交易适用品种扩展至 A 股" in data
+    assert "一个主假设和一个竞争假设" in skill
+    assert "两条完整的三层路径" in skill
+    assert "不得预加载全部参考文件" in skill
+    assert "意图不知道" in skill
+    assert "未持仓默认保持空仓" in skill
+    assert "纯数据/事件降级分析" in contract
+    assert "不得把降级结果包装成主力判断" in skill
+    assert "`market_intent_snapshot`" in skill
+    assert "不得跨北京时间交易日沿用旧快照" in skill
+    assert "`market_intent_snapshot`" in market
+    assert "不得跨北京时间交易日复用" in market
+    assert "同日大盘使用快照" in skill
+    assert "顺势共振" in game
+    assert "借势操作" in game
+    assert "一个主假设和一个竞争假设" in strategy
+    assert "退出至空仓" in risk
     assert "0.75%" not in risk
     assert "1.5%" not in risk
     assert "25%" not in risk
     assert "35%" not in risk
     assert "40%" not in risk
     joined_contracts = "\n".join(
-        (skill, contract, game, event, mainline, strategy, risk, data)
+        (skill, contract, game, event, mainline, market, strategy, risk, data)
     )
     assert "current_tradeability" not in joined_contracts
     assert "不强制排名、首选或备选" in contract
