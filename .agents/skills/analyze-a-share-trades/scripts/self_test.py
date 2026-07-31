@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fast offline checks for the skill's deterministic helper scripts."""
+"""Fast offline checks for the skill contract and deterministic helpers."""
 
 from __future__ import annotations
 
@@ -664,89 +664,104 @@ def test_mainline_metrics() -> None:
     assert scan_mainlines.calculate_return(closes, trading_dates, 20) is not None
 
 
-def test_relative_window_output_policy() -> None:
-    contract = (
-        SCRIPT_DIR.parent / "references" / "output-contract.md"
-    ).read_text(encoding="utf-8")
-    skill = (SCRIPT_DIR.parent / "SKILL.md").read_text(encoding="utf-8")
-    game = (
-        SCRIPT_DIR.parent / "references" / "intraday-game.md"
-    ).read_text(encoding="utf-8")
-    event = (
-        SCRIPT_DIR.parent / "references" / "event-evidence.md"
-    ).read_text(encoding="utf-8")
-    mainline = (
-        SCRIPT_DIR.parent / "references" / "mainline-industry-map.md"
-    ).read_text(encoding="utf-8")
-    market = (
-        SCRIPT_DIR.parent / "references" / "market-regime.md"
-    ).read_text(encoding="utf-8")
-    strategy = (
-        SCRIPT_DIR.parent / "references" / "strategy-playbooks.md"
-    ).read_text(encoding="utf-8")
-    risk = (
-        SCRIPT_DIR.parent / "references" / "risk-and-portfolio.md"
-    ).read_text(encoding="utf-8")
-    data = (
-        SCRIPT_DIR.parent / "references" / "data-and-models.md"
-    ).read_text(encoding="utf-8")
-    assert "不得计算、询问或输出已有持仓的已持有天数" in contract
+def test_document_contracts() -> None:
+    skill_root = SCRIPT_DIR.parent
+    reference_root = skill_root / "references"
+    expected_references = {
+        "data-access.md",
+        "discover-candidates.md",
+        "event-evidence.md",
+        "execution.md",
+        "market-sector-evidence.md",
+        "price-flow-evidence.md",
+    }
+    actual_references = {path.name for path in reference_root.glob("*.md")}
+    assert actual_references == expected_references
+
+    skill = (skill_root / "SKILL.md").read_text(encoding="utf-8")
+    references = {
+        name: (reference_root / name).read_text(encoding="utf-8")
+        for name in sorted(expected_references)
+    }
+    joined = "\n".join((skill, *references.values()))
+
+    assert len(skill) <= 4_500
+    assert all(len(text) <= 4_000 for text in references.values())
+    assert len(skill) + sum(map(len, references.values())) <= 20_000
+    for name in expected_references:
+        assert f"references/{name}" in skill
+
     assert "不向用户换算未来自然日期" in skill
-    assert "D1 只定义本次未来行动" in skill
-    assert "不是历史数据截断点" in skill
-    assert "不计算两次问询相隔的交易日" in skill
+    assert "D1 不是历史数据截断点" in skill
+    assert "已持有天数" in skill
     assert "原策略失效/恢复/到期" in skill
-    assert "旧策略生命周期" in contract
-    assert "先定义历史事件筛选规则" in skill
-    assert "所有符合预设规则的样本不足 3 个" in game
-    assert "不得只挑支持" in game
-    assert "纳入 `analysis_as_of` 之前所有符合预设规则的事件" in event
-    assert "不表示已经识别某个真实账户" in game
-    assert "盘后固定价格交易描述为散户专属" in game
-    assert "产业龙头" in mainline
-    assert "盘面龙头" in mainline
-    assert "情绪龙头" in mainline
-    assert "阶段性新核心" in mainline
-    assert "不打分、不排名" in mainline
-    assert "对每只候选建立贯穿大盘—板块—个股的一个主假设和一个竞争假设" in strategy
-    assert "事件首先是所有交易分析都可以使用的证据维度" in strategy
-    assert "假设能够成交" in risk
-    assert "未成交/部分成交" in risk
-    assert "不建立涨跌停可交易性三态" in risk
-    assert "已无用户可使用的适用交易时段" in skill
-    assert "不能仅凭“已收盘”机械跳到 D2" in contract
-    assert "盘后固定价格交易适用品种扩展至 A 股" in data
-    assert "一个主假设和一个竞争假设" in skill
-    assert "两条完整的三层路径" in skill
-    assert "不得预加载全部参考文件" in skill
-    assert "意图不知道" in skill
-    assert "未持仓默认保持空仓" in skill
-    assert "纯数据/事件降级分析" in contract
-    assert "不得把降级结果包装成主力判断" in skill
-    assert "`market_intent_snapshot`" in skill
-    assert "不得跨北京时间交易日沿用旧快照" in skill
-    assert "`market_intent_snapshot`" in market
-    assert "不得跨北京时间交易日复用" in market
-    assert "同日大盘使用快照" in skill
-    assert "顺势共振" in game
-    assert "借势操作" in game
-    assert "一个主假设和一个竞争假设" in strategy
-    assert "退出至空仓" in risk
-    assert "0.75%" not in risk
-    assert "1.5%" not in risk
-    assert "25%" not in risk
-    assert "35%" not in risk
-    assert "40%" not in risk
-    joined_contracts = "\n".join(
-        (skill, contract, game, event, mainline, market, strategy, risk, data)
+    assert "历史事件研究必须先定义筛选规则" in references["event-evidence.md"]
+    assert "纳入全部符合条件的样本" in references["event-evidence.md"]
+    assert "真正可比样本不足 3 个" in references["price-flow-evidence.md"]
+    assert "盘后固定价格交易扩展至 A 股" in references["data-access.md"]
+    assert "产业核心" in references["market-sector-evidence.md"]
+    assert "盘面核心" in references["market-sector-evidence.md"]
+    assert "情绪核心" in references["market-sector-evidence.md"]
+    assert "不打分、不排名" in references["discover-candidates.md"]
+    assert "先假设能够成交" in references["execution.md"]
+    assert "未成交或部分成交" in references["execution.md"]
+    assert "退出至空仓" in references["execution.md"]
+    assert "0.75%" not in joined
+    assert "1.5%" not in joined
+    assert "35%" not in joined
+    assert "40%" not in joined
+    assert "current_tradeability" not in joined
+    assert "起止自然日期" not in joined
+    assert "复核日：Dn，YYYY-MM-DD" not in joined
+    assert "已持有 X 个交易日" not in joined
+
+
+def test_reasoning_engine_contract() -> None:
+    skill_root = SCRIPT_DIR.parent
+    skill = (skill_root / "SKILL.md").read_text(encoding="utf-8")
+    readme = (skill_root.parents[2] / "README.md").read_text(encoding="utf-8")
+    metadata = (
+        skill_root / "agents" / "openai.yaml"
+    ).read_text(encoding="utf-8")
+
+    required_phrases = (
+        "Agent 自主选择最小分析范围",
+        "不要求用户选择模式",
+        "持仓处置",
+        "指定股票买入",
+        "全市场机会发现",
+        "只有用户未给候选",
+        "一个主假设和最强竞争假设",
+        "支持、削弱或证伪",
+        "不是平行打分维度",
+        "不得从标签出发寻找图形",
+        "没有任何参考文件默认必读",
+        "一次扩展一个最有区分力的证据源",
+        "新增证据不再改变假设、动作或风险边界时停止",
+        "未持仓默认保持空仓",
+        "不得把降级结果包装成主力判断",
     )
-    assert "current_tradeability" not in joined_contracts
-    assert "不强制排名、首选或备选" in contract
-    assert "不设置“最大反证”固定栏目" in contract
-    assert "不固定输出乐观/基准/悲观三情景" in contract
-    assert "起止自然日期" not in contract
-    assert "复核日：Dn，YYYY-MM-DD" not in contract
-    assert "已持有 X 个交易日" not in contract
+    for phrase in required_phrases:
+        assert phrase in skill
+
+    forbidden_mandates = (
+        "形成最终答复时，读取 [output-contract.md]",
+        "输出买卖、仓位、涨跌停尝试或组合判断时，读取",
+        "全市场选股必须覆盖步骤 1—6、8—11",
+        "先加载同日大盘博弈快照",
+        "八个判断维度",
+        "策略路由",
+    )
+    for phrase in forbidden_mandates:
+        assert phrase not in skill
+
+    assert "$analyze-a-share-trades" in metadata
+    assert "最小分析范围" in metadata
+    assert "意图假设" in metadata
+    assert "大盘、板块和个股的战略互动" not in metadata
+    assert "建立主导资金行为的主假设和竞争假设" in readme
+    assert "已经给出持仓或候选股票时不扫描全市场" in readme
+    assert "分析 600000 现在是否值得买" in readme
 
 
 def test_deepseek_payload() -> None:
@@ -771,7 +786,8 @@ def main() -> int:
         test_price_features,
         test_analysis_as_of_filtering,
         test_mainline_metrics,
-        test_relative_window_output_policy,
+        test_document_contracts,
+        test_reasoning_engine_contract,
         test_deepseek_payload,
     )
     for test in tests:

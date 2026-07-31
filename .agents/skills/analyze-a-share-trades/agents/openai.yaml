@@ -1,4 +1,4 @@
 interface:
   display_name: "A股短中波段决策"
-  short_description: "沪深主板三层博弈、主力意图、事件量价与短中波段决策"
-  default_prompt: "使用 $analyze-a-share-trades 从大盘、板块和个股三层博弈推断主导资金意图，并分析我的 A 股买卖问题。"
+  short_description: "以竞争意图假设验证持仓处置、指定股票买入与全市场机会发现"
+  default_prompt: "使用 $analyze-a-share-trades 自主选择最小分析范围，从已有事实建立竞争性主导资金意图假设，用最有区分力的数据验证后给出买卖动作。"
