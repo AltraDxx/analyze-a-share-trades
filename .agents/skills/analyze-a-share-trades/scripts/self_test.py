@@ -694,7 +694,7 @@ def test_document_contracts() -> None:
     assert "不向用户换算未来自然日期" in skill
     assert "D1 不是历史数据截断点" in skill
     assert "已持有天数" in skill
-    assert "原策略失效/恢复/到期" in skill
+    assert "原事件是否延续、完成、失败或转化" in skill
     assert "历史事件研究必须先定义筛选规则" in references["event-evidence.md"]
     assert "纳入全部符合条件的样本" in references["event-evidence.md"]
     assert "真正可比样本不足 3 个" in references["price-flow-evidence.md"]
@@ -702,10 +702,15 @@ def test_document_contracts() -> None:
     assert "产业核心" in references["market-sector-evidence.md"]
     assert "盘面核心" in references["market-sector-evidence.md"]
     assert "情绪核心" in references["market-sector-evidence.md"]
+    assert "事件最终目标、所处阶段和当前动作" in references[
+        "price-flow-evidence.md"
+    ]
+    assert "event_goal" in references["market-sector-evidence.md"]
+    assert "信息事件" in references["event-evidence.md"]
     assert "不打分、不排名" in references["discover-candidates.md"]
     assert "先假设能够成交" in references["execution.md"]
     assert "未成交或部分成交" in references["execution.md"]
-    assert "退出至空仓" in references["execution.md"]
+    assert "购买确认信息" in references["execution.md"]
     assert "0.75%" not in joined
     assert "1.5%" not in joined
     assert "35%" not in joined
@@ -731,14 +736,28 @@ def test_reasoning_engine_contract() -> None:
         "指定股票买入",
         "全市场机会发现",
         "只有用户未给候选",
-        "一个主假设和最强竞争假设",
+        "统一盘面事件推演引擎",
+        "最终想实现什么",
+        "当前处于什么阶段",
+        "现在正在或必须完成什么",
+        "简洁推断路径",
+        "为什么偏偏此时发生",
+        "在任何行情指标、个股列表或证据明细之前",
+        "事件要做什么",
+        "处于什么阶段",
+        "它现在要做什么",
+        "不得用“用户等待/买入”替代",
+        "首个内容块必须包含上述四个同名短项",
+        "若是普通波动本应出现却没有出现的反事实",
+        "不得从预设的",
+        "用户持仓只影响执行",
         "支持、削弱或证伪",
         "不是平行打分维度",
         "不得从标签出发寻找图形",
         "没有任何参考文件默认必读",
         "一次扩展一个最有区分力的证据源",
-        "新增证据不再改变假设、动作或风险边界时停止",
-        "未持仓默认保持空仓",
+        "未持仓默认等待",
+        "不得仅因“意图不知道”机械清仓",
         "不得把降级结果包装成主力判断",
     )
     for phrase in required_phrases:
@@ -751,15 +770,19 @@ def test_reasoning_engine_contract() -> None:
         "先加载同日大盘博弈快照",
         "八个判断维度",
         "策略路由",
+        "参与者及仓位、成本、期限",
+        "未持仓默认保持空仓",
     )
     for phrase in forbidden_mandates:
         assert phrase not in skill
 
     assert "$analyze-a-share-trades" in metadata
     assert "最小分析范围" in metadata
-    assert "意图假设" in metadata
+    assert "事件要做什么" in metadata
+    assert "推断路径" in metadata
     assert "大盘、板块和个股的战略互动" not in metadata
-    assert "建立主导资金行为的主假设和竞争假设" in readme
+    assert "推断它最终想实现什么" in readme
+    assert "哪些关键行为与普通波动不符" in readme
     assert "已经给出持仓或候选股票时不扫描全市场" in readme
     assert "分析 600000 现在是否值得买" in readme
 
